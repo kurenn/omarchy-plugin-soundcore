@@ -1,0 +1,62 @@
+# Soundcore
+
+An [Omarchy](https://omarchy.org/) shell plugin that adds a bar widget for
+controlling Soundcore headphones and earbuds: sound mode (ANC/Transparency/
+Normal), noise-canceling sub-mode, equalizer presets, and a live 8-band
+custom EQ.
+
+It's a thin UI over [OpenSCQ30](https://github.com/Oppzippy/OpenSCQ30), the
+open-source Soundcore control library/CLI for Linux. Whatever settings
+OpenSCQ30 exposes for your specific model (sound modes, equalizer, battery)
+are what the panel shows — the widget reads the device's capabilities at
+runtime rather than assuming a fixed feature set, so it degrades gracefully
+on models with partial support (e.g. some earbuds only expose battery level,
+no sound mode/EQ control) and picks up new capabilities automatically as
+OpenSCQ30 adds them.
+
+## Requirements
+
+- [`openscq30-cli`](https://aur.archlinux.org/packages/openscq30-cli) (or
+  `openscq30-cli-bin`) installed and on `PATH`. On Arch/Omarchy:
+  ```
+  omarchy pkg aur add openscq30-cli-bin
+  ```
+  Prefer the `-bin` package unless you specifically need a newer version —
+  building `openscq30-cli` from source also compiles its GUI counterpart,
+  which is memory-heavy and can strain machines with limited RAM.
+- Your headphones paired over Bluetooth (`bluetoothctl` or your system
+  Bluetooth settings) — normal OS-level pairing, separate from OpenSCQ30.
+- Your device registered with OpenSCQ30 itself:
+  ```
+  openscq30-cli list-models                     # find your model id
+  openscq30-cli paired-devices add \
+    --mac-address AA:BB:CC:DD:EE:FF \
+    --model SoundcoreXXXX
+  ```
+
+## Install
+
+```
+omarchy plugin add https://github.com/s-w-3/omarchy-plugin-soundcore.git --enable
+omarchy bar move io.github.s-w-3.soundcore --section right
+```
+
+## Usage
+
+Click the headphone icon in the bar. The panel shows whichever
+OpenSCQ30-paired device is currently connected over Bluetooth:
+
+- **Sound mode** — Normal / Transparency / Noise Canceling (options vary by
+  model)
+- **Noise Canceling** — sub-mode buttons, shown only while ANC is active
+- **Equalizer preset** — dropdown of the device's built-in presets
+- **Custom EQ** — live sliders per band; dragging one applies immediately
+  and clears the active preset
+
+If no supported device is connected, or your specific model doesn't expose
+sound mode/EQ settings in OpenSCQ30, the panel says so plainly instead of
+showing empty controls.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
