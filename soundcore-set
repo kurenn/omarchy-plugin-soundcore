@@ -10,4 +10,4 @@ for kv in "$@"; do
   args+=(--set "$kv")
 done
 
-exec openscq30-cli device --mac-address "$mac" setting "${args[@]}"
+exec flock "${XDG_RUNTIME_DIR:-/tmp}/soundcore.lock" openscq30-cli device --mac-address "$mac" setting "${args[@]}"

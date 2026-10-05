@@ -4,6 +4,10 @@
 # exposes for it (varies per model) and their current values.
 set -uo pipefail
 
+# openscq30 allows one connection per device; serialize with soundcore-set.
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/soundcore.lock"
+flock 9
+
 paired_json=$(openscq30-cli paired-devices list --json 2>/dev/null)
 [ -z "$paired_json" ] && paired_json='[]'
 
